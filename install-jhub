@@ -1,0 +1,37 @@
+#!/bin/sh
+
+# this it the unique identifier for a given jhub install in a single cluster
+instance="$1"
+
+# prompt for the name of this test instance
+while [ -z "${instance}" ]; do
+  read -p 'Name for this test instance? ' instance 
+done
+
+# fail if not greater than helm version 3
+helm_version=$(helm version --template '{{.Version}}')
+
+# should be the same for all (including during testing)
+namespace=jhub-${instance}
+
+# the current version of the jupyterhub chart at the repo site
+jhub_chart_version="0.11.1"
+
+helm repo add jupyterhub https://jupyterhub.github.io/helm-chart/
+helm repo update
+
+# The config.yaml file here is extracted from the 0.11.1 tar ball in the
+# repo. It had to have it's proxy secret token set (which openssl), but
+# then it worked. That could probably be automated better than this but
+# as long as we stay on the same version, we're fine for now.
+# Eventually the config.yaml file might have something more interesting
+# in it as we get along with the hacking and discovery of how it works
+
+helm upgrade --cleanup-on-fail \
+  --install "${instance}" jupyterhub/jupyterhub \
+  --namespace "${namespace}" \
+  --create-namespace \
+  --version "${jhub_chart_version}" \
+  --set proxy.secretToken=$(openssl rand -hex 32)
+
+# TODO expose ports
