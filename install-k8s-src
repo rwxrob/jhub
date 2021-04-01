@@ -1,12 +1,7 @@
 #!/bin/sh
 
 # get the kubernetes source
-git submodule  add -f -b 'v1.18.0' 'git@github.com:kubernetes/kubernetes' 
-
-# switch to the version being used
-# cd kubernetes
-# git checkout -b v1.18.0
-# cd -
-
-# symlink it so kind sees it (assume a single entry, no colon) 
-#ln -s "$PWD/kubernetes" "$GOPATH/kubernetes" 
+test -z "${GOPATH}" && echo "GOPATH not found" && exit 1
+cd "${GOPATH}" 
+rm -rf kubernetes
+git clone -b v1.18.0 git@github.com:kubernetes/kubernetes

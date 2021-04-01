@@ -1,11 +1,8 @@
 #!/bin/sh
 # No need to get GO111MODULE to on anymore (1.17+)
-exec go get sigs.k8s.io/kind
-echo <<<EOM
-Add the following to your .bashrc (or equivalent):
+go get sigs.k8s.io/kind
+echo 'Add the following to your .bashrc (or equivalent):
 
   source <(kind completion bash)
 
-Note that this used the kubernetes submodule.
-
-EOM
+Note that this used the kubernetes submodule. '
